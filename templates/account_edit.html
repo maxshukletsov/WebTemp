@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Пользователь{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+{% if user.is_staff %}
+
+ <h2>Редактирование</h2>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+    <a href="{% url 'account_detail' user.pk %}">Назад</a>
+    </form>
+{% else %}
+    <p> У вас нет доступа </p>
+
+
+{% endif %}
+
+{% endif %}
+{% endblock %}

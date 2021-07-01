@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+{% if user.is_staff %}
+    <div class="column">
+     <p class="text">ФИО: {{ user.bio }}</p>
+     <p class="text">E-mail: {{ user.email }}</p>
+     <p class="text">Дата рождения: {{ user.birthday }}</p>
+    </div>
+
+{% else %}
+    <div class="column">
+    <p> У вас нет доступа </p>
+    </div>
+
+
+{% endif %}
+{% endif %}
+{% endblock %}

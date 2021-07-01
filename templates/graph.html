@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Графики{% endblock %}
+{% load static %} 
+{% block content %}
+    {% load l10n %}
+    {% if user.is_authenticated %}
+        <script>
+            function add_new_sensor() {
+                $('#form_nondisplay').css("visibility", "visible");
+                var span = document.getElementsByClassName("close")[0];
+                span.onclick = function () {
+                    $('#form_nondisplay').css("visibility", "hidden")
+                    $('#form_nondisplay').find('input').each(function () { $(this).val('')})
+                };
+                window.onclick = function (event) {
+                    if (event.target === form_nondisplay ) {
+                        $('#form_nondisplay').css("visibility", "hidden");
+                        $('#form_nondisplay').find('input').each(function () { $(this).val('')})
+                    }
+                }
+            }
+        </script>
+        <div class="sensor-bar">
+            {% for sensor in Sensor %}
+                <a href="{% url 'TData' pk=sensor.pk %}"  class="sensor{{ sensor.pk }} graylight">{{ sensor.name }}</a>
+            {% endfor %}
+            {% if user.is_staff %}
+                <a href="#" id="add_new_sensor" onclick="add_new_sensor()" class="graylight">Добавить</a>
+            {% endif %}
+        </div>
+        <div class="sensor_edit_bar column">
+            {% if user.is_staff %}
+            <a href="{% url 'sensor_edit' pk=pk %}"  class="sensor{{ sensor.pk }} white bigfont"><img src="{% static 'image/settings-icon.png' %}" style="width: 30px; height: 30px; color: black;"></a>
+            {% endif %}
+            <a href="{% url 'TDataF' pk=pk days=1 %}"  class="sensor{{ sensor.pk }} white">1 день</a>
+            <a href="{% url 'TDataF' pk=pk days=7 %}"  class="sensor{{ sensor.pk }} white">7 дней</a>
+            <a href="{% url 'TDataF' pk=pk days=30 %}"  class="sensor{{ sensor.pk }} white">30 дней</a>
+        </div>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+
+                var averages = [];
+                var ranges = [];
+                $(".sensor{{ pk }}").each(function (){$(this).addClass("active")});
+                {% for TData in TDatas %}   
+                    var date = Date.UTC({{TData.datetime.year}}, {{TData.datetime.month}}-1, {{ TData.datetime.day }}, {{TData.datetime.hour}}+3, {{TData.datetime.minute}})
+                    averages.push([date, {{ TData.amount | unlocalize}}]);
+                    ranges.push([date, 22, 25]);
+                {% endfor %}
+                {% for sensor in Sensor %}
+                    {% if sensor.pk == pk %}
+                        var name = "{{ sensor.name }}"
+                    {% endif %}
+                {% endfor %}
+                const chart = Highcharts.stockChart('container', {
+                    
+                    rangeSelector: {
+                        buttons: [{
+                          count: 1,
+                          type: 'day',
+                          text: '1D'
+                        }, {
+                          count: 1,
+                          type: 'week',
+                          text: '1W'
+                        }, {
+                          type: 'all',
+                          text: 'Все'
+                        }],
+                        inputEnabled: true,
+                        selected: 1
+                      },
+                    title: {
+                        text: name
+                    },
+                    xAxis: {
+                      type: 'datetime',
+                      accessibility: {
+                        rangeDescription: 'Range: Jul 1st 2009 to Jul 31st 2009.'
+                      },
+                      ordinal: false
+                    },
+                    yAxis: {
+                       title: {
+                         text: null
+                       }
+                     },
+                    tooltip: {
+                        crosshairs: true,
+                        shared: true,
+                        valueSuffix: '°C'
+                    },
+                    series:
+                        [{
+                            name: 'Температура, °C',
+                            data: averages,
+                            
+                            zIndex: 1,
+                            marker: {
+                                fillColor: 'white',
+                                lineWidth: 2,
+                                lineColor: Highcharts.getOptions().colors[0]
+                            }
+                        }, {
+                            name: 'Границы',
+                            data: ranges,
+                            
+                            type: 'arearange',
+                            lineWidth: 0,
+                            linkedTo: ':previous',
+                            color: Highcharts.getOptions().colors[0],
+                            fillOpacity: 0.3,
+                            zIndex: 0,
+                            marker: {
+                                enabled: false
+                            }
+                        }]
+                });
+            });
+        </script>
+        <div id="container"></div>
+        <div id="form_nondisplay" class="form">
+            <form method="POST">{% csrf_token %}
+                <h1>Новый сенсор</h1>
+                {{ form.as_p }}
+                <div class="row">
+                    <button type="submit">Сохранить</button>
+                    <button type="button" class="close">Закрыть</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}

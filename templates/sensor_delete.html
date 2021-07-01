@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Удалить?{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+{% if user.is_staff %}
+<div class="column">
+    
+    <form action="." method="POST">{% csrf_token %}
+        <h1 class="text">Удалить {{ sensor.name }} ?</h1>
+        <div class="row">
+            <input type="submit" class="red" value="Yes"></button>
+            <a href="{% url 'sensor_edit' sensor.pk %}" class="white">Назад</a>
+        </div>
+    </form>
+    
+</div>    
+{% else %}
+    <p> У вас нет доступа, пожалуйста, авторизуйтесь в системе </p>
+{% endif %}
+
+{% endif %}
+{% endblock %}

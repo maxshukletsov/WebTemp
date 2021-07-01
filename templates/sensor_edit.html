@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Сенсор{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+{% if user.is_staff %}
+<div class="column">
+    <h2 class="text">Редактирование</h2>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form.as_p }}
+        <div class="row">
+            <button type="submit" class="green">Сохранить</button>
+            <a href="{% url 'sensor_delete' pk %}" class="red">Удалить</a>
+            <a href="{% url 'TData' pk %}" class="graylight">Назад</a>
+        </div>
+    </form>
+    
+</div>    
+{% else %}
+    <p> У вас нет доступа, пожалуйста, авторизуйтесь в системе </p>
+{% endif %}
+
+{% endif %}
+{% endblock %}

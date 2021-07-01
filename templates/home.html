@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <div>
+        Рады приветствовать вас на нашем сайте, {{ user.username }}
+    </div>
+{% else %}
+    <div>
+        Рады приветствовать вас на нашем сайте, пожалуйста, войдите в систему
+    </div>
+{% endif %}
+{% endblock %}
