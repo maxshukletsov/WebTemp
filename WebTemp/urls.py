@@ -19,9 +19,9 @@ from django.views.generic.base import TemplateView
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls, name='adminpage'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('users.urls')),
     path('TData/', include('WebT.urls')),
+    path('admin/', admin.site.urls, name='adminpage'),
 ]

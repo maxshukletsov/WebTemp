@@ -7,6 +7,7 @@ from .models import TData
 class SensorAdmin(admin.ModelAdmin):
     list_display = ('name', 'ip_address', 'port', 'place', 'max_temperature', 'min_temperature', 'in_range')
 
+
 class TDataAdmin(admin.ModelAdmin):
     list_display = ('sensor', 'amount', 'datetime')
 

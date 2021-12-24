@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  webtemp_db:
+    image: postgres:11.5-alpine
+    container_name: webtemp_db
+    ports:
+      - "5438:5432"
+    volumes:
+      - postgres_db:/var/lib/posgresql/data/
+  
+  webtemp:
+    container_name: webtemp
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    depends_on:
+      - webtemp_db
+
+volumes:
+ postgres_db:

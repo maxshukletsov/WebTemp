@@ -1,11 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Sensor, TData
 from .form import SensorForm
-from django.utils import timezone
 import datetime
 import pytz
-from django.views.generic import DeleteView
-from django.urls import reverse_lazy
 
 
 OurTimeZone = pytz.timezone('Europe/Moscow')
@@ -13,7 +10,15 @@ today = datetime.datetime.today().strftime("%Y-%m-%d")
 yesterday = (datetime.datetime.now(OurTimeZone) + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
 
-def graph_temp(request, pk=Sensor.objects.all()[0].pk, days = 1):
+def get_sensor():
+    try:
+        pk = Sensor.objects.all()[0].pk
+    except:
+        pk = 0
+    return pk
+
+
+def graph_temp(request, pk=get_sensor(), days = 1):
     data = TData.objects.filter(sensor=pk, datetime__gt=(datetime.datetime.now(OurTimeZone) - datetime.timedelta(days=days)))
     sensors = Sensor.objects.all()
     if request.method == "POST":

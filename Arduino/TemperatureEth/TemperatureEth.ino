@@ -6,20 +6,20 @@
 #include <EtherEncLib.h>
 #include <avr/pgmspace.h>
 
-static unsigned char ipaddr[] = { 192, 168, 0, 125 };
+static unsigned char ipaddr[] = { 192, 168, 1, 111 };
 static unsigned char macaddr[] = { 0x00, 0x11, 0x22, 0x44, 0x00, 0x25 };
 const PROGMEM char resp200Txt[] = {"HTTP/1.0 200 OK\n\rContent-Type: text/html\n\rPragma: no-cache\n\r\n\r"};
 OneWire ds(2);
 float temperature = -56;
 long lastUpdateTime = 0;
 const int TEMP_UPDATE_TIME = 1000;
-EtherEncLib lib(80);
+EtherEncLib lib(8000);
 char msgBuffer[20];
 
 void setup() {
   pinMode(10,OUTPUT);  //--- ? -- SS pin must be output
   lib.begin(ipaddr, macaddr);
-  Serial.begin(115200);
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -29,6 +29,7 @@ void loop() {
   Serial.print("Temp: ");
   Serial.print(temperature);
   Serial.print(" C");
+  Serial.println("");
   
   if ( lib.available() )
   {
